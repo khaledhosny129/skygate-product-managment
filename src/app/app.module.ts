@@ -18,7 +18,8 @@ import * as Features from '@features';
     }),
     CoreModule,
     Features.AuthModule,
-    Features.UsersModule
+    Features.UsersModule,
+    Features.ProductsModule
   ],
   providers: [
     { 

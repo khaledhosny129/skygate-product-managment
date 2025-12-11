@@ -71,7 +71,9 @@ export class UsersService extends BaseService<UserDoc> {
     await this.remove(id);
     return {
       message: 'User deleted successfully',
-      data: null
+      data: {
+        id
+      } 
     };
   }
 

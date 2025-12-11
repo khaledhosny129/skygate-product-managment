@@ -1,4 +1,4 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationError, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
@@ -10,6 +10,7 @@ import * as passport from 'passport';
 import { join } from 'path';
 
 import { initSwagger } from '@docs/swagger';
+import { BadRequestException } from '@core/exceptions';
 
 
 export function configure(
@@ -33,7 +34,7 @@ export function configure(
     compression(),
     cookieParser(),
     session({
-      secret: configService.get<string>('JWT_SECRET') || 'your-secret',
+      secret: configService.get<string>('JWT_SECRET'),
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -57,8 +58,28 @@ export function configure(
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
-    stopAtFirstError: true,
-    forbidNonWhitelisted: true
+    stopAtFirstError: false,
+    forbidNonWhitelisted: true,
+    exceptionFactory: (errors: ValidationError[]) => {
+      const validationErrors = errors.map((error: ValidationError) => {
+        const field = error.property;
+        const constraints = error.constraints || {};
+        const message = Object.values(constraints)[0] || `${field} is invalid`;
+        
+        return {
+          field,
+          message
+        };
+      });
+
+      return new BadRequestException(
+        'Validation failed',
+        {
+          code: 'VALIDATION_ERROR',
+          details: validationErrors
+        }
+      );
+    }
   }));
 
   const allowedOrigins = ['http://localhost:3000'];

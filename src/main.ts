@@ -5,7 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppModule } from '@app/app.module';
 import { configure } from '@app/app.setup';
-import { SuperAdminInitService } from '@core/services/super-admin-init.service';
+import { AdminInitService } from '@core/services/admin-init.service'
 
 async function bootstrap() {
 
@@ -13,14 +13,14 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
-  const superAdminInitService = app.get(SuperAdminInitService);
+  const adminInitService = app.get(AdminInitService);
 
   configure(app, configService);
 
-  await superAdminInitService.initializeSuperAdmin();
+  await adminInitService.initializeAdmin();
 
-  const superAdminCredentials =
-    superAdminInitService.getSuperAdminCredentials();
+  const adminCredentials =
+    adminInitService.getAdminCredentials();
 
   await app.listen(port);
 
@@ -29,7 +29,7 @@ async function bootstrap() {
     `\n 🔌 Port: ${port}` +
     `\n 🌀 Environment: ${process.env.NODE_ENV}` +
     `\n 📒 API Docs: ${configService.get('API_URL')}` +
-    `\n 🙎‍♂️ Super Admin: ${superAdminCredentials.email}:${superAdminCredentials.password}`
+    `\n 🙎‍♂️ Admin: ${adminCredentials.email}:${adminCredentials.password}`
   );
 }
 void bootstrap();

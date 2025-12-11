@@ -30,8 +30,8 @@ export class EnvironmentVariables {
   JWT_EXPIRY: string;
 
   @IsString()
-  SUPER_ADMIN_EMAIL: string;
+  ADMIN_EMAIL: string;
 
   @IsString()
-  SUPER_ADMIN_PASSWORD: string;
+  ADMIN_PASSWORD: string;
 }

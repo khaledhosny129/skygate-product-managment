@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, userSchema } from '@features/users/entities/user.entity';
 import { HttpExceptionFilter } from '@core/filters/http-exception.filter';
 import { LoggingInterceptor } from '@core/interceptors/logging.interceptor';
-import { SuperAdminInitService } from '@core/services/super-admin-init.service';
+import { AdminInitService } from '@core/services/admin-init.service'
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import { SuperAdminInitService } from '@core/services/super-admin-init.service';
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
-    SuperAdminInitService
+    AdminInitService
   ],
-  exports: [SuperAdminInitService]
+  exports: [AdminInitService]
 })
 export class CoreModule {}

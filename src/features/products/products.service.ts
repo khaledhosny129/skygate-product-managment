@@ -53,7 +53,7 @@ export class ProductsService extends BaseService<ProductDoc> {
   ) {
     const queryFilter = { ...filter };
 
-    if (req.user.role !== RoleEnum.SUPER_ADMIN) {
+    if (req.user.role !== RoleEnum.ADMIN) {
       queryFilter.type = ProductTypeEnum.PUBLIC;
     }
 
@@ -62,7 +62,7 @@ export class ProductsService extends BaseService<ProductDoc> {
       if (filterBy.category) {
         queryFilter.category = filterBy.category;
       }
-      if (filterBy.type && req.user.role === RoleEnum.SUPER_ADMIN) {
+      if (filterBy.type && req.user.role === RoleEnum.ADMIN) {
         queryFilter.type = filterBy.type;
       }
     }
@@ -78,7 +78,7 @@ export class ProductsService extends BaseService<ProductDoc> {
   async getProductById(id: string | Types.ObjectId, req: RequestWithUser) {
     const product = await this.findOneById(id);
 
-    if (req.user.role !== RoleEnum.SUPER_ADMIN && product.type !== ProductTypeEnum.PUBLIC) {
+    if (req.user.role !== RoleEnum.ADMIN && product.type !== ProductTypeEnum.PUBLIC) {
       throw new NotFoundException(
         'Product not found',
         {

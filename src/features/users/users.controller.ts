@@ -30,33 +30,33 @@ export class UsersController {
   ) {}
 
   @Get('/me')
-  @ApiOperation({ summary: 'Get my profile - User and Super Admin' })
+  @ApiOperation({ summary: 'Get my profile - User and Admin' })
   @UseGuards(JwtAuthGuard)
-  @Roles(RoleEnum.SUPER_ADMIN, RoleEnum.USER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.USER)
   profile(@Req() req: RequestWithUser) {
     return { user: req.user };
   }
 
   @Patch('/me')
-  @ApiOperation({ summary: 'Update my profile - User and Super Admin' })
+  @ApiOperation({ summary: 'Update my profile - User and Admin' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN, RoleEnum.USER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.USER)
   updateMe(@Req() req: RequestWithUser, @Body() updateProfileDto: UpdateProfileDto) {
     return this.usersService.updateUser(req.user._id, updateProfileDto);
   }
 
   @Patch('/me/password')
-  @ApiOperation({ summary: 'Update user password' })
+  @ApiOperation({ summary: 'Update user password - User and Admin' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN, RoleEnum.USER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.USER)
   updatePasswordMe(@Req() req: RequestWithUser, @Body() updatePasswordDto: UpdatePasswordDto) {
     return this.usersService.updatePasswordMe(req.user._id.toString(), updatePasswordDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users with filtering - Super Admin Only' })
+  @ApiOperation({ summary: 'Get all users with filtering - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   findAll(@Query() queryParams: QueryParamsDto) {
     return this.usersService.findAll(
       {},
@@ -69,25 +69,25 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a user by id - Super Admin Only' })
+  @ApiOperation({ summary: 'Get a user by id - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   findOne(@Param('id') id: string) {
     return this.usersService.getUserById(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a user by id - Super Admin Only' })
+  @ApiOperation({ summary: 'Update a user by id - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a user by id - Super Admin Only' })
+  @ApiOperation({ summary: 'Delete a user by id - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.removeUser(id);
   }

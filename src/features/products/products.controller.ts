@@ -30,17 +30,17 @@ export class ProductsController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new product - Super Admin Only' })
+  @ApiOperation({ summary: 'Create a new product - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.createProduct(createProductDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all products with filtering - User and Super Admin' })
+  @ApiOperation({ summary: 'Get all products with filtering - User and Admin' })
   @UseGuards(JwtAuthGuard)
-  @Roles(RoleEnum.SUPER_ADMIN, RoleEnum.USER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.USER)
   findAll(@Query() queryParams: QueryParamsDto, @Req() req: RequestWithUser) {
     return this.productsService.findAll(
       {},
@@ -51,33 +51,33 @@ export class ProductsController {
   }
 
   @Get('stats')
-  @ApiOperation({ summary: 'Get product statistics - Super Admin Only' })
+  @ApiOperation({ summary: 'Get product statistics - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   getStatistics() {
     return this.productsService.getStatistics();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a product by id - User and Super Admin' })
+  @ApiOperation({ summary: 'Get a product by id - User and Admin' })
   @UseGuards(JwtAuthGuard)
-  @Roles(RoleEnum.SUPER_ADMIN, RoleEnum.USER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.USER)
   findOne(@Param('id') id: string, @Req() req: RequestWithUser) {
     return this.productsService.getProductById(id, req);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a product by id - Super Admin Only' })
+  @ApiOperation({ summary: 'Update a product by id - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.updateProduct(id, updateProductDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a product by id - Super Admin Only' })
+  @ApiOperation({ summary: 'Delete a product by id - Admin Only' })
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(RoleEnum.SUPER_ADMIN)
+  @Roles(RoleEnum.ADMIN)
   remove(@Param('id') id: string) {
     return this.productsService.removeProduct(id);
   }

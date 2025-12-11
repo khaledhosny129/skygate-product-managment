@@ -154,7 +154,6 @@ JWT_EXPIRES_IN=7d
 API_URL=http://localhost:3000/api
 ADMIN_EMAIL=admin@skygate.com
 ADMIN_PASSWORD=Admin@123456
-SESSION_SECRET=your-super-secret-session-key
 ```
 
 ---

@@ -50,6 +50,14 @@ export class ProductsController {
     );
   }
 
+  @Get('stats')
+  @ApiOperation({ summary: 'Get product statistics - Super Admin Only' })
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(RoleEnum.SUPER_ADMIN)
+  getStatistics() {
+    return this.productsService.getStatistics();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a product by id - User and Super Admin' })
   @UseGuards(JwtAuthGuard)

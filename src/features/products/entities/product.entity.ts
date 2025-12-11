@@ -79,3 +79,6 @@ export class Product extends BaseEntity {
 }
 
 export const productSchema = SchemaFactory.createForClass(Product);
+
+productSchema.index({ category: 1 });
+productSchema.index({ type: 1 });

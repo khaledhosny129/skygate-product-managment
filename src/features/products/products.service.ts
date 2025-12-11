@@ -137,5 +137,147 @@ export class ProductsService extends BaseService<ProductDoc> {
       }
     };
   }
+
+  async getStatistics() {
+    const stats = await this.m.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalProducts: { $sum: 1 },
+          totalInventoryValue: {
+            $sum: { $multiply: ['$price', '$quantity'] }
+          },
+          totalDiscountedValue: {
+            $sum: {
+              $cond: [
+                { $and: [{ $ne: ['$discountPrice', null] }, { $ne: ['$discountPrice', undefined] }] },
+                { $multiply: ['$discountPrice', '$quantity'] },
+                0
+              ]
+            }
+          },
+          totalPrice: { $sum: '$price' },
+          outOfStockCount: {
+            $sum: { $cond: [{ $eq: ['$quantity', 0] }, 1, 0] }
+          },
+          productsByCategory: {
+            $push: {
+              category: '$category',
+              price: '$price',
+              quantity: '$quantity',
+              discountPrice: '$discountPrice'
+            }
+          },
+          productsByType: {
+            $push: {
+              type: '$type',
+              price: '$price',
+              quantity: '$quantity',
+              discountPrice: '$discountPrice'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          totalProducts: 1,
+          totalInventoryValue: { $round: ['$totalInventoryValue', 2] },
+          totalDiscountedValue: { $round: ['$totalDiscountedValue', 2] },
+          averagePrice: {
+            $round: [
+              {
+                $cond: [
+                  { $gt: ['$totalProducts', 0] },
+                  { $divide: ['$totalPrice', '$totalProducts'] },
+                  0
+                ]
+              },
+              2
+            ]
+          },
+          outOfStockCount: 1,
+          productsByCategory: 1,
+          productsByType: 1
+        }
+      }
+    ]);
+
+    if (!stats || stats.length === 0) {
+      return {
+        message: 'Statistics retrieved successfully',
+        data: {
+          totalProducts: 0,
+          totalInventoryValue: 0,
+          totalDiscountedValue: 0,
+          averagePrice: 0,
+          outOfStockCount: 0,
+          productsByCategory: [],
+          productsByType: []
+        }
+      };
+    }
+
+    const result = stats[0];
+
+    const categoryStats = await this.m.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+          totalValue: {
+            $sum: { $multiply: ['$price', '$quantity'] }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          category: '$_id',
+          count: 1,
+          totalValue: { $round: ['$totalValue', 2] }
+        }
+      },
+      {
+        $sort: { category: 1 }
+      }
+    ]);
+
+    const typeStats = await this.m.aggregate([
+      {
+        $group: {
+          _id: '$type',
+          count: { $sum: 1 },
+          totalValue: {
+            $sum: { $multiply: ['$price', '$quantity'] }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          type: '$_id',
+          count: 1,
+          totalValue: { $round: ['$totalValue', 2] }
+        }
+      },
+      {
+        $sort: { type: 1 }
+      }
+    ]);
+
+    return {
+      message: 'Statistics retrieved successfully',
+      data: {
+        totalProducts: result.totalProducts,
+        totalInventoryValue: result.totalInventoryValue,
+        totalDiscountedValue: result.totalDiscountedValue,
+        averagePrice: result.averagePrice,
+        outOfStockCount: result.outOfStockCount,
+        productsByCategory: categoryStats,
+        productsByType: typeStats
+      }
+    };
+  }
 }
 

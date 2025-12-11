@@ -5,6 +5,9 @@ export interface QueryOptions {
   searchFields?: string[];
   sort?: string;
   order?: 'asc' | 'desc';
-  filterBy?: Record<string, any>;
+  category?: string;
+  type?: 'public' | 'private';
+  minPrice?: number;
+  maxPrice?: number;
 }
 

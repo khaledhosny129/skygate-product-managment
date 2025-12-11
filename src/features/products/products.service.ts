@@ -57,16 +57,6 @@ export class ProductsService extends BaseService<ProductDoc> {
       queryFilter.type = ProductTypeEnum.PUBLIC;
     }
 
-    if (queryOptions?.filterBy) {
-      const filterBy = queryOptions.filterBy;
-      if (filterBy.category) {
-        queryFilter.category = filterBy.category;
-      }
-      if (filterBy.type && req.user.role === RoleEnum.ADMIN) {
-        queryFilter.type = filterBy.type;
-      }
-    }
-
     const result = await this.find(queryFilter, projection, {
       ...queryOptions,
       searchFields: ['name', 'sku', 'category', 'description']

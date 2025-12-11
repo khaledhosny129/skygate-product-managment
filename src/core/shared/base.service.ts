@@ -169,7 +169,10 @@ export class BaseService<T> {
       searchFields = [],
       sort = 'createdAt',
       order = 'desc',
-      filterBy = {}
+      category,
+      type,
+      minPrice,
+      maxPrice
     } = queryOptions;
 
     const query: any = { ...filter };
@@ -182,24 +185,20 @@ export class BaseService<T> {
       }
     }
 
-    if (filterBy && Object.keys(filterBy).length > 0) {
-      Object.keys(filterBy).forEach(key => {
-        const value = filterBy[key];
+    if (category) {
+      query.category = category;
+    }
 
-        if (value === undefined || value === null || value === '') {
-          return;
-        }
+    if (type) {
+      query.type = type;
+    }
 
-        if (key.toLowerCase().startsWith('min')) {
-          const fieldName = key.replace(/^min/i, '').toLowerCase();
-          query[fieldName] = { ...query[fieldName], $gte: Number(value) };
-        } else if (key.toLowerCase().startsWith('max')) {
-          const fieldName = key.replace(/^max/i, '').toLowerCase();
-          query[fieldName] = { ...query[fieldName], $lte: Number(value) };
-        } else {
-          query[key] = value;
-        }
-      });
+    if (minPrice !== undefined && minPrice !== null) {
+      query.price = { ...query.price, $gte: Number(minPrice) };
+    }
+
+    if (maxPrice !== undefined && maxPrice !== null) {
+      query.price = { ...query.price, $lte: Number(maxPrice) };
     }
 
     const skip = (page - 1) * limit;

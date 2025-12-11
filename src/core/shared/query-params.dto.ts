@@ -5,11 +5,11 @@ import {
   IsString,
   IsNumber,
   IsIn,
-  IsObject,
   Min,
   Max
 } from 'class-validator';
 import { QueryOptions } from '@core/shared/query-options.interface';
+import { ProductTypeEnum } from '@features/products/enums/product-type.enum';
 
 export class QueryParamsDto implements QueryOptions {
   @IsOptional()
@@ -43,14 +43,47 @@ export class QueryParamsDto implements QueryOptions {
   order?: 'asc' | 'desc' = 'desc';
 
   @IsOptional()
-  @IsObject()
-  @Type(() => Object)
-  @ApiProperty({ 
-    required: false, 
-    type: Object, 
-    example: { category: 'string', status: 'string' },
-    description: 'Filter by field-value pairs. Supports min/max prefixes for range queries (e.g., minPrice, maxPrice)'
+  @IsString()
+  @ApiProperty({
+    required: false,
+    type: String,
+    example: 'Electronics',
+    description: 'Filter by exact category name'
   })
-  filterBy?: Record<string, any>;
+  category?: string;
+
+  @IsOptional()
+  @IsIn(Object.values(ProductTypeEnum))
+  @ApiProperty({
+    required: false,
+    enum: ProductTypeEnum,
+    example: ProductTypeEnum.PUBLIC,
+    description: 'Filter by type (public or private)'
+  })
+  type?: ProductTypeEnum;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @ApiProperty({
+    required: false,
+    type: Number,
+    example: 10,
+    description: 'Minimum price filter'
+  })
+  minPrice?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @ApiProperty({
+    required: false,
+    type: Number,
+    example: 100,
+    description: 'Maximum price filter'
+  })
+  maxPrice?: number;
 }
 
